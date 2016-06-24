@@ -62,6 +62,37 @@ namespace AzureAD.Web.Controllers
 			}
 		}
 
+		public ActionResult Groups()
+		{
+			if (this.Request.IsAuthenticated)
+			{
+				var user = ClaimsPrincipal.Current;
+				if (user != null)
+				{
+					var claimsIdentity = user.Identity as ClaimsIdentity;
+					var groupIds = claimsIdentity.Claims.Where(x => x.Type == "groups");
+					IList<string> groupNames = new List<string>();
+
+					var service = new GroupService();
+					
+					foreach (var groupId in groupIds)
+					{
+						groupNames.Add(service.RetrieveGroupName(groupId.Value));
+					}
+
+						return Json(groupNames, JsonRequestBehavior.AllowGet);
+				}
+				else
+				{
+					return Content("You do not have claims");
+				}
+			}
+			else
+			{
+				return Content("You are not authenticated");
+			}
+		}
+
 		public void SignOut()
 		{
 			Session.Abandon();

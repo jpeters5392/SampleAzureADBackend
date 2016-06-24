@@ -55,15 +55,6 @@ namespace AzureAD.Web
 							// we don't do anything with this here, but we need to do this so that the access token is added to the cache so we can use it later
 							AuthenticationResult result = await authContext.AcquireTokenByAuthorizationCodeAsync(
 								context.Code, new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path)), credential, graphUrl);
-
-							/*
-							var groupService = new ClaimsGroupService();
-							var groups = await groupService.RetrieveAADGroups(uniqueUserId);
-							foreach (var group in groups)
-							{
-								context.AuthenticationTicket.Identity.AddClaim(new System.Security.Claims.Claim("groupMember", group));
-							}
-							*/
 						}
 					}
 				});

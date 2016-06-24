@@ -183,7 +183,7 @@
     </Compile>
     <Compile Include="Models\UserClaim.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ClaimsGroupService.cs" />
+    <Compile Include="Services\GroupService.cs" />
     <Compile Include="Services\TokenCacheService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
