@@ -93,6 +93,29 @@ namespace AzureAD.Web.Controllers
 			}
 		}
 
+		public ActionResult Roles()
+		{
+			if (this.Request.IsAuthenticated)
+			{
+				var user = ClaimsPrincipal.Current;
+				if (user != null)
+				{
+					var claimsIdentity = user.Identity as ClaimsIdentity;
+					var roleNames = claimsIdentity.Claims.Where(x => x.Type == "roles").Select(x => x.Value);
+
+					return Json(roleNames, JsonRequestBehavior.AllowGet);
+				}
+				else
+				{
+					return Content("You do not have claims");
+				}
+			}
+			else
+			{
+				return Content("You are not authenticated");
+			}
+		}
+
 		public void SignOut()
 		{
 			Session.Abandon();
