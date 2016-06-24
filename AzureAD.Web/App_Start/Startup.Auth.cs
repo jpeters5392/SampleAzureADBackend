@@ -56,12 +56,14 @@ namespace AzureAD.Web
 							AuthenticationResult result = await authContext.AcquireTokenByAuthorizationCodeAsync(
 								context.Code, new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path)), credential, graphUrl);
 
+							/*
 							var groupService = new ClaimsGroupService();
 							var groups = await groupService.RetrieveAADGroups(uniqueUserId);
 							foreach (var group in groups)
 							{
 								context.AuthenticationTicket.Identity.AddClaim(new System.Security.Claims.Claim("groupMember", group));
 							}
+							*/
 						}
 					}
 				});
