@@ -7,3 +7,6 @@ Application roles are configured in the Azure AD application's manifest JSON fil
 
 ## Group Based Claims ##
 Group claims are not sent by default.  However, once you have authenticated the user you may query the Graph API for the current user to retrieve their group memberships.  If you do this as part of the sign on process then you can add those to the initial claims if you want.  Otherwise you can just retrieve them as needed.  
+
+## Client Secret ##
+The client secret is a key that is generated in the Azure portal and is only available when you save it initially.
