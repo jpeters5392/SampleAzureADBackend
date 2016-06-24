@@ -1,4 +1,5 @@
 ﻿using Owin;
+using System.Web.Services.Description;
 
 namespace AzureAD.Web
 {
