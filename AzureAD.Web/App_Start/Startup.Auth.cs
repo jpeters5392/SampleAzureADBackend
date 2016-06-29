@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System.Web;
 using AzureAD.Web.Services;
 using System.Web.Helpers;
+using System.Web.Http;
 
 namespace AzureAD.Web
 {
@@ -59,15 +60,34 @@ namespace AzureAD.Web
 					}
 				});
 
-			app.UseWindowsAzureActiveDirectoryBearerAuthentication(
-                new WindowsAzureActiveDirectoryBearerAuthenticationOptions
-                {
-                    Tenant = ConfigurationManager.AppSettings["ida:Tenant"],
-                    TokenValidationParameters = new TokenValidationParameters {
-                         ValidAudience = ConfigurationManager.AppSettings["ida:Audience"]
-                    },
+			app.Map("/api", inner =>
+			{
+				var config = new HttpConfiguration();
+
+				config.SuppressDefaultHostAuthentication();
+				config.Filters.Add(new HostAuthenticationFilter("OAuth2Bearer"));
+				inner.UseWindowsAzureActiveDirectoryBearerAuthentication(
+				new WindowsAzureActiveDirectoryBearerAuthenticationOptions
+				{
+					Tenant = ConfigurationManager.AppSettings["ida:Tenant"],
+					TokenValidationParameters = new TokenValidationParameters
+					{
+						ValidateAudience = false,
+						AuthenticationType = "OAuth2Bearer"
+					},
 					AuthenticationType = "OAuth2Bearer"
-                });
+				});
+
+				config.MapHttpAttributeRoutes();
+
+				config.Routes.MapHttpRoute(
+					name: "DefaultApi",
+					routeTemplate: "{controller}/{id}",
+					defaults: new { id = RouteParameter.Optional }
+				);
+
+				inner.UseWebApi(config);
+			});
         }
     }
 }

@@ -26,5 +26,10 @@ namespace AzureAD.Web.Services
 		{
 			return groups[groupId];
 		}
+
+		public string RetrieveGroupId(string groupName)
+		{
+			return groups.Where(x => x.Value == groupName).Select(x => x.Key).FirstOrDefault();
+		}
 	}
 }

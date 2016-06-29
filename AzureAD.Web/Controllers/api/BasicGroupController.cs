@@ -1,4 +1,5 @@
 ﻿using AzureAD.Web.Attributes;
+using AzureAD.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,17 @@ namespace AzureAD.Web.Controllers.api
 	public class BasicGroupController : ApiController
 	{
 		// GET api/<controller>
-		public IEnumerable<string> Get()
+		public Dictionary<string, string> Get()
 		{
-			return ClaimsPrincipal.Current.Claims.Where(x => x.Type == "groups").Select(x => x.Value);
+			var groupIds = ClaimsPrincipal.Current.Claims.Where(x => x.Type == "groups").Select(x => x.Value).ToList();
+			var groupService = new GroupService();
+			var groups = new Dictionary<string, string>();
+			foreach (var groupId in groupIds)
+			{
+				var groupName = groupService.RetrieveGroupName(groupId);
+				groups.Add(groupId, groupName);
+			}
+			return groups;
 		}
 	}
 }
