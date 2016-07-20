@@ -27,10 +27,12 @@ namespace AzureAD.Web
 		// For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
 		public void ConfigureAuth(IAppBuilder app)
         {
+			// the web access to the site will use cookie authentication
 			app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
 
 			app.UseCookieAuthentication(new CookieAuthenticationOptions());
 
+			// we will use OpenIdConnect to authenticate with Azure AD
 			app.UseOpenIdConnectAuthentication(
 				new OpenIdConnectAuthenticationOptions
 				{
@@ -53,17 +55,19 @@ namespace AzureAD.Web
 							string uniqueUserId = context.AuthenticationTicket.Identity.FindFirst(objectIdentifierClaimType).Value;
 							Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext authContext = new Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext(authority, new TokenCacheService(uniqueUserId));
 
-							// we don't do anything with this here, but we need to do this so that the access token is added to the cache so we can use it later
+							// we don't do anything with the access token, but we do this so that the access token is added to the cache so we can use it later if needed
 							AuthenticationResult result = await authContext.AcquireTokenByAuthorizationCodeAsync(
 								context.Code, new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path)), credential, graphUrl);
 						}
 					}
 				});
 
+			// WebApi controllers will use bearer token authentication instead of cookie authentication
 			app.Map("/api", inner =>
 			{
 				var config = new HttpConfiguration();
 
+				// suppress the default auth type so that cookies will not work for WebApi
 				config.SuppressDefaultHostAuthentication();
 				config.Filters.Add(new HostAuthenticationFilter("OAuth2Bearer"));
 				inner.UseWindowsAzureActiveDirectoryBearerAuthentication(
